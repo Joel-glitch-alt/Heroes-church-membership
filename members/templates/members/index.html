@@ -1,0 +1,1449 @@
+{% comment %} <!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Church Member Registration</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --ivory: #f7f3ee;
+        --parchment: #ede7dc;
+        --gold: #b8965a;
+        --gold-light: #d4af7a;
+        --gold-muted: #c9a96e22;
+        --charcoal: #2a2520;
+        --ink: #3d3630;
+        --muted: #7a6f66;
+        --border: #d6cdbf;
+        --success-bg: #eef5ec;
+        --success: #3d7a35;
+        --error-bg: #faf0ee;
+        --error: #8b3a2a;
+      }
+
+      body {
+        font-family: "DM Sans", sans-serif;
+        background: var(--ivory);
+        color: var(--ink);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2rem 1rem 4rem;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      /* Subtle background pattern */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image:
+          radial-gradient(
+            circle at 20% 20%,
+            rgba(184, 150, 90, 0.07) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 80% 80%,
+            rgba(184, 150, 90, 0.05) 0%,
+            transparent 50%
+          );
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .page-wrapper {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        max-width: 580px;
+      }
+
+      /* Header */
+      .header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+        animation: fadeDown 0.7s ease both;
+      }
+
+      .cross-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 52px;
+        height: 52px;
+        margin-bottom: 1.2rem;
+        position: relative;
+      }
+
+      .cross-icon::before {
+        content: "✛";
+        font-size: 2.2rem;
+        color: var(--gold);
+        line-height: 1;
+      }
+
+      .church-name {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 13px;
+        font-weight: 500;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-bottom: 0.5rem;
+      }
+
+      h1 {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 2.4rem;
+        font-weight: 600;
+        color: var(--charcoal);
+        line-height: 1.15;
+        margin-bottom: 0.5rem;
+      }
+
+      .subtitle {
+        font-size: 14px;
+        color: var(--muted);
+        font-weight: 300;
+        letter-spacing: 0.01em;
+      }
+
+      /* Divider */
+      .divider {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 0.6rem auto 0;
+        width: 200px;
+      }
+
+      .divider::before,
+      .divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+      }
+
+      .divider span {
+        color: var(--gold);
+        font-size: 14px;
+        line-height: 1;
+      }
+
+      /* Card */
+      .card {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        padding: 2.5rem 2.5rem 2rem;
+        box-shadow:
+          0 2px 24px rgba(42, 37, 32, 0.06),
+          0 1px 3px rgba(42, 37, 32, 0.04);
+        animation: fadeUp 0.7s ease 0.15s both;
+      }
+
+      /* Form */
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+
+      .form-group {
+        margin-bottom: 1.25rem;
+        position: relative;
+      }
+
+      label {
+        display: block;
+        font-size: 11.5px;
+        font-weight: 500;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 6px;
+      }
+
+      label .required {
+        color: var(--gold);
+        margin-left: 2px;
+      }
+
+      input,
+      select {
+        width: 100%;
+        height: 44px;
+        padding: 0 14px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-family: "DM Sans", sans-serif;
+        font-size: 14.5px;
+        color: var(--charcoal);
+        background: var(--ivory);
+        outline: none;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s,
+          background 0.2s;
+        appearance: none;
+        -webkit-appearance: none;
+      }
+
+      input::placeholder {
+        color: #b0a899;
+        font-size: 14px;
+      }
+
+      input:focus,
+      select:focus {
+        border-color: var(--gold);
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(184, 150, 90, 0.12);
+      }
+
+      input.error,
+      select.error {
+        border-color: #c0705a;
+        box-shadow: 0 0 0 3px rgba(192, 112, 90, 0.1);
+      }
+
+      .select-wrapper {
+        position: relative;
+      }
+
+      .select-wrapper::after {
+        content: "";
+        position: absolute;
+        right: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 0;
+        height: 0;
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-top: 6px solid var(--muted);
+        pointer-events: none;
+      }
+
+      select {
+        cursor: pointer;
+        padding-right: 36px;
+      }
+      select option {
+        color: var(--charcoal);
+      }
+
+      .field-note {
+        font-size: 11.5px;
+        color: var(--muted);
+        margin-top: 5px;
+        font-weight: 300;
+      }
+
+      .error-msg {
+        font-size: 11.5px;
+        color: var(--error);
+        margin-top: 5px;
+        display: none;
+      }
+
+      .error-msg.visible {
+        display: block;
+      }
+
+      /* Section label */
+      .section-label {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 15px;
+        font-style: italic;
+        color: var(--gold);
+        margin-bottom: 1rem;
+        margin-top: 0.25rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--parchment);
+      }
+
+      /* Submit button */
+      .btn-submit {
+        width: 100%;
+        height: 50px;
+        background: var(--charcoal);
+        color: var(--ivory);
+        border: none;
+        border-radius: 8px;
+        font-family: "DM Sans", sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        letter-spacing: 0.08em;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        transition:
+          background 0.2s,
+          transform 0.1s;
+        margin-top: 0.5rem;
+      }
+
+      .btn-submit:hover {
+        background: var(--ink);
+      }
+      .btn-submit:active {
+        transform: scale(0.99);
+      }
+
+      .btn-submit .btn-text {
+        transition: opacity 0.2s;
+      }
+
+      .btn-submit.loading .btn-text {
+        opacity: 0;
+      }
+
+      .spinner {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+
+      .btn-submit.loading .spinner {
+        opacity: 1;
+      }
+
+      .spinner::after {
+        content: "";
+        width: 18px;
+        height: 18px;
+        border: 2px solid rgba(247, 243, 238, 0.3);
+        border-top-color: var(--ivory);
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+      }
+
+      /* Toast */
+      .toast {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 14px 18px;
+        border-radius: 10px;
+        font-size: 13.5px;
+        margin-bottom: 1.5rem;
+        opacity: 0;
+        transform: translateY(-8px);
+        transition:
+          opacity 0.3s,
+          transform 0.3s;
+        pointer-events: none;
+      }
+
+      .toast.visible {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+      }
+
+      .toast.success {
+        background: var(--success-bg);
+        border: 1px solid #b5d4b2;
+        color: var(--success);
+      }
+
+      .toast.error {
+        background: var(--error-bg);
+        border: 1px solid #ddb8b0;
+        color: var(--error);
+      }
+
+      .toast-icon {
+        font-size: 16px;
+        line-height: 1.3;
+        flex-shrink: 0;
+      }
+      .toast-text strong {
+        display: block;
+        margin-bottom: 2px;
+      }
+
+      /* Members list */
+      .members-section {
+        margin-top: 2rem;
+        animation: fadeUp 0.7s ease 0.3s both;
+      }
+
+      .members-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+      }
+
+      .members-title {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: var(--charcoal);
+      }
+
+      .member-count {
+        font-size: 12px;
+        background: var(--gold-muted);
+        color: var(--gold);
+        border: 1px solid rgba(184, 150, 90, 0.25);
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-weight: 500;
+      }
+
+      .members-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .member-card {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 14px 18px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        animation: fadeUp 0.4s ease both;
+        transition: box-shadow 0.2s;
+      }
+
+      .member-card:hover {
+        box-shadow: 0 2px 12px rgba(42, 37, 32, 0.07);
+      }
+
+      .member-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--parchment);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Cormorant Garamond", serif;
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--gold);
+        flex-shrink: 0;
+        border: 1px solid var(--border);
+      }
+
+      .member-info {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .member-name {
+        font-size: 14.5px;
+        font-weight: 500;
+        color: var(--charcoal);
+      }
+
+      .member-meta {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .member-date {
+        font-size: 11.5px;
+        color: var(--muted);
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 2.5rem 1rem;
+        color: var(--muted);
+        background: #fff;
+        border: 1px dashed var(--border);
+        border-radius: 10px;
+      }
+
+      .empty-icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        opacity: 0.5;
+      }
+      .empty-state p {
+        font-size: 13.5px;
+      }
+
+      /* API config bar */
+      .api-bar {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 12px 16px;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 12.5px;
+        color: var(--muted);
+        animation: fadeDown 0.7s ease 0.05s both;
+      }
+
+      .api-bar .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #ccc;
+        flex-shrink: 0;
+        transition: background 0.3s;
+      }
+
+      .api-bar .dot.connected {
+        background: #5baa52;
+      }
+      .api-bar input {
+        flex: 1;
+        height: 32px;
+        font-size: 12.5px;
+        background: var(--ivory);
+        border-color: transparent;
+        padding: 0 10px;
+      }
+
+      .api-bar input:focus {
+        border-color: var(--gold);
+      }
+
+      .api-bar button {
+        height: 32px;
+        padding: 0 14px;
+        background: var(--charcoal);
+        color: var(--ivory);
+        border: none;
+        border-radius: 6px;
+        font-size: 12px;
+        cursor: pointer;
+        font-family: "DM Sans", sans-serif;
+        transition: background 0.2s;
+        white-space: nowrap;
+      }
+
+      .api-bar button:hover {
+        background: var(--ink);
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeDown {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      @media (max-width: 500px) {
+        .card {
+          padding: 1.75rem 1.25rem 1.5rem;
+        }
+        .form-row {
+          grid-template-columns: 1fr;
+          gap: 0;
+        }
+        h1 {
+          font-size: 1.9rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-wrapper">
+      <!-- Header -->
+      <div class="header">
+        <div class="cross-icon"></div>
+        <p class="church-name">HEROE'S CHAPEL</p>
+        <h1>Member Registration</h1>
+        <p class="subtitle">
+          Welcome to the family. Register a new member below.
+        </p>
+        <div class="divider"><span>✦</span></div>
+      </div>
+
+      <!-- API Config Bar -->
+      <div class="api-bar">
+        <span class="dot" id="api-dot"></span>
+        <input
+          type="text"
+          id="api-base-url"
+          placeholder="API base URL — e.g. https://yourchurch.com/api"
+        />
+        <button onclick="setApiUrl()">Connect</button>
+      </div>
+
+      <!-- Toast notification -->
+      <div class="toast" id="toast">
+        <span class="toast-icon" id="toast-icon"></span>
+        <div class="toast-text" id="toast-text"></div>
+      </div>
+
+      <!-- Registration Card -->
+      <div class="card">
+        <p class="section-label">Personal details</p>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>First name <span class="required">*</span></label>
+            <input
+              type="text"
+              id="first_name"
+              placeholder="e.g. Kwame"
+              autocomplete="given-name"
+            />
+            <span class="error-msg" id="err-first_name"
+              >First name is required</span
+            >
+          </div>
+          <div class="form-group">
+            <label>Last name <span class="required">*</span></label>
+            <input
+              type="text"
+              id="last_name"
+              placeholder="e.g. Mensah"
+              autocomplete="family-name"
+            />
+            <span class="error-msg" id="err-last_name"
+              >Last name is required</span
+            >
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Location <span class="required">*</span></label>
+          <input
+            type="text"
+            id="location"
+            placeholder="e.g. Accra, Greater Accra"
+            autocomplete="address-level2"
+          />
+          <span class="error-msg" id="err-location">Location is required</span>
+        </div>
+
+        <div class="form-group">
+          <label>Date joined <span class="required">*</span></label>
+          <input type="date" id="date_joined" />
+          <span class="error-msg" id="err-date_joined">Date is required</span>
+        </div>
+
+        <p class="section-label" style="margin-top: 0.5rem">Referral</p>
+
+        <div class="form-group">
+          <label>Invited by</label>
+          <div class="select-wrapper">
+            <select id="invited_by">
+              <option value="">— No one yet (founding member) —</option>
+            </select>
+          </div>
+          <p class="field-note">
+            Optional — leave blank if this is a founding member
+          </p>
+        </div>
+
+        <button class="btn-submit" id="submit-btn" onclick="submitForm()">
+          <span class="btn-text">Register Member</span>
+          <span class="spinner"></span>
+        </button>
+      </div>
+
+      <!-- Members List -->
+      <div class="members-section">
+        <div class="members-header">
+          <h2 class="members-title">Registered Members</h2>
+          <span class="member-count" id="member-count">0 members</span>
+        </div>
+        <div class="members-list" id="members-list">
+          <div class="empty-state">
+            <div class="empty-icon">✦</div>
+            <p>No members registered yet.<br />Be the first to join!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let API_BASE = "";
+      let members = [];
+
+      // Set today as default date
+      document.getElementById("date_joined").value = new Date()
+        .toISOString()
+        .split("T")[0];
+
+      function setApiUrl() {
+        const val = document
+          .getElementById("api-base-url")
+          .value.trim()
+          .replace(/\/$/, "");
+        if (!val)
+          return showToast(
+            "error",
+            "Missing URL",
+            "Please enter a valid API base URL.",
+          );
+        API_BASE = val;
+        document.getElementById("api-dot").classList.add("connected");
+        showToast("success", "API connected", `Pointing to ${API_BASE}`);
+        loadMembers();
+      }
+
+      async function loadMembers() {
+        if (!API_BASE) return;
+        try {
+          const res = await fetch(`${API_BASE}/members/`);
+          if (!res.ok) throw new Error();
+          members = await res.json();
+          renderMembers();
+          populateInvitedBy();
+        } catch {
+          // silently fail — API might not be ready yet
+        }
+      }
+
+      function populateInvitedBy() {
+        const sel = document.getElementById("invited_by");
+        const current = sel.value;
+        sel.innerHTML =
+          '<option value="">— No one yet (founding member) —</option>';
+        members.forEach((m) => {
+          const opt = document.createElement("option");
+          opt.value = m.id;
+          opt.textContent = `${m.first_name} ${m.last_name}`;
+          sel.appendChild(opt);
+        });
+        sel.value = current;
+      }
+
+      function renderMembers() {
+        const list = document.getElementById("members-list");
+        const count = document.getElementById("member-count");
+        count.textContent = `${members.length} member${members.length !== 1 ? "s" : ""}`;
+
+        if (!members.length) {
+          list.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">✦</div>
+          <p>No members registered yet.<br>Be the first to join!</p>
+        </div>`;
+          return;
+        }
+
+        list.innerHTML = "";
+        members.forEach((m, i) => {
+          const initials = (m.first_name[0] + m.last_name[0]).toUpperCase();
+          const inviter = m.invited_by
+            ? members.find((x) => x.id == m.invited_by)
+            : null;
+          const inviterName = inviter
+            ? `Invited by ${inviter.first_name} ${inviter.last_name}`
+            : "Founding member";
+          const date = m.date_joined ? formatDate(m.date_joined) : "";
+
+          const card = document.createElement("div");
+          card.className = "member-card";
+          card.style.animationDelay = `${i * 0.05}s`;
+          card.innerHTML = `
+        <div class="member-avatar">${initials}</div>
+        <div class="member-info">
+          <div class="member-name">${m.first_name} ${m.last_name}</div>
+          <div class="member-meta">${m.location} · ${inviterName}</div>
+        </div>
+        <div class="member-date">${date}</div>
+      `;
+          list.appendChild(card);
+        });
+      }
+
+      function formatDate(dateStr) {
+        const d = new Date(dateStr + "T00:00:00");
+        return d.toLocaleDateString("en-GB", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        });
+      }
+
+      function validate() {
+        const fields = ["first_name", "last_name", "location", "date_joined"];
+        let valid = true;
+        fields.forEach((f) => {
+          const el = document.getElementById(f);
+          const err = document.getElementById(`err-${f}`);
+          if (!el.value.trim()) {
+            el.classList.add("error");
+            err.classList.add("visible");
+            valid = false;
+          } else {
+            el.classList.remove("error");
+            err.classList.remove("visible");
+          }
+        });
+        return valid;
+      }
+
+      // Clear errors on input
+      ["first_name", "last_name", "location", "date_joined"].forEach((f) => {
+        document.getElementById(f).addEventListener("input", () => {
+          document.getElementById(f).classList.remove("error");
+          document.getElementById(`err-${f}`).classList.remove("visible");
+        });
+      });
+
+      async function submitForm() {
+        if (!validate()) return;
+        if (!API_BASE) {
+          showToast(
+            "error",
+            "No API connected",
+            "Enter your API base URL above and click Connect.",
+          );
+          return;
+        }
+
+        const btn = document.getElementById("submit-btn");
+        btn.classList.add("loading");
+        btn.disabled = true;
+
+        // const payload = {
+        //  first_name: document.getElementById("first_name").value.trim(),
+        //  last_name: document.getElementById("last_name").value.trim(),
+        //  location: document.getElementById("location").value.trim(),
+        // date_joined: document.getElementById("date_joined").value,
+        //  invited_by: document.getElementById("invited_by").value || null,
+        // };
+
+        const payload = {
+          first_name: document.getElementById("first_name").value.trim(),
+          last_name: document.getElementById("last_name").value.trim(),
+          contact: document.getElementById("contact").value.trim(), // 👈 ADD THIS
+          location: document.getElementById("location").value.trim(),
+          date_joined: document.getElementById("date_joined").value,
+          invited_by: document.getElementById("invited_by").value || null,
+        };
+
+        try {
+          const res = await fetch(`${API_BASE}/members/`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+
+          if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(JSON.stringify(err));
+          }
+
+          const newMember = await res.json();
+          members.unshift(newMember);
+          renderMembers();
+          populateInvitedBy();
+          resetForm();
+          showToast(
+            "success",
+            "Member registered!",
+            `${payload.first_name} ${payload.last_name} has been added to the church.`,
+          );
+        } catch (e) {
+          showToast(
+            "error",
+            "Registration failed",
+            "Could not save the member. Check your API connection.",
+          );
+        } finally {
+          btn.classList.remove("loading");
+          btn.disabled = false;
+        }
+      }
+
+      function resetForm() {
+        ["first_name", "last_name", "location"].forEach((f) => {
+          document.getElementById(f).value = "";
+        });
+        document.getElementById("invited_by").value = "";
+        document.getElementById("date_joined").value = new Date()
+          .toISOString()
+          .split("T")[0];
+      }
+
+      function showToast(type, title, message) {
+        const toast = document.getElementById("toast");
+        const icon = document.getElementById("toast-icon");
+        const text = document.getElementById("toast-text");
+
+        toast.className = `toast ${type}`;
+        icon.textContent = type === "success" ? "✓" : "✕";
+        text.innerHTML = `<strong>${title}</strong>${message}`;
+        toast.classList.add("visible");
+
+        setTimeout(() => toast.classList.remove("visible"), 4500);
+      }
+    </script>
+  </body>
+</html>
+{% endcomment %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Church Member Registration</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* --- Keep all your existing CSS here --- */
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: "DM Sans", sans-serif;
+        background: #f7f3ee;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2rem 1rem 4rem;
+        position: relative;
+        overflow-x: hidden;
+      }
+      .page-wrapper {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        max-width: 580px;
+      }
+      .header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+      }
+      .cross-icon::before {
+        content: "✛";
+        font-size: 2.2rem;
+        color: #b8965a;
+        line-height: 1;
+      }
+      .church-name {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 13px;
+        font-weight: 500;
+        color: #b8965a;
+        margin-bottom: 0.5rem;
+      }
+      h1 {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 2.4rem;
+        font-weight: 600;
+        color: #2a2520;
+        margin-bottom: 0.5rem;
+      }
+      .subtitle {
+        font-size: 14px;
+        color: #7a6f66;
+        font-weight: 300;
+      }
+      .divider {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 0.6rem auto 0;
+        width: 200px;
+      }
+      .divider::before,
+      .divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: #d6cdbf;
+      }
+      .divider span {
+        color: #b8965a;
+        font-size: 14px;
+      }
+      .card {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #d6cdbf;
+        padding: 2.5rem 2.5rem 2rem;
+        box-shadow:
+          0 2px 24px rgba(42, 37, 32, 0.06),
+          0 1px 3px rgba(42, 37, 32, 0.04);
+      }
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      .form-group {
+        margin-bottom: 1.25rem;
+        position: relative;
+      }
+      label {
+        display: block;
+        font-size: 11.5px;
+        font-weight: 500;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: #7a6f66;
+        margin-bottom: 6px;
+      }
+      input,
+      select {
+        width: 100%;
+        height: 44px;
+        padding: 0 14px;
+        border: 1px solid #d6cdbf;
+        border-radius: 8px;
+        font-family: "DM Sans", sans-serif;
+        font-size: 14.5px;
+        color: #2a2520;
+        background: #f7f3ee;
+        outline: none;
+      }
+      input::placeholder {
+        color: #b0a899;
+      }
+      input:focus,
+      select:focus {
+        border-color: #b8965a;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(184, 150, 90, 0.12);
+      }
+      .error-msg {
+        font-size: 11.5px;
+        color: #8b3a2a;
+        margin-top: 5px;
+        display: none;
+      }
+      .error-msg.visible {
+        display: block;
+      }
+      .btn-submit {
+        width: 100%;
+        height: 50px;
+        background: #2a2520;
+        color: #f7f3ee;
+        border: none;
+        border-radius: 8px;
+        font-family: "DM Sans", sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        margin-top: 0.5rem;
+        position: relative;
+        overflow: hidden;
+      }
+      .btn-submit:hover {
+        background: #3d3630;
+      }
+      .btn-submit.loading .btn-text {
+        opacity: 0;
+      }
+      .spinner {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      .btn-submit.loading .spinner {
+        opacity: 1;
+      }
+      .spinner::after {
+        content: "";
+        width: 18px;
+        height: 18px;
+        border: 2px solid rgba(247, 243, 238, 0.3);
+        border-top-color: #f7f3ee;
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+      }
+      .section-label {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 15px;
+        font-style: italic;
+        color: #b8965a;
+        margin-bottom: 1rem;
+        margin-top: 0.25rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #ede7dc;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-wrapper">
+      <!-- Header -->
+      <div class="header">
+        <div class="cross-icon"></div>
+        <p class="church-name">HEROE'S CHAPEL</p>
+        <h1>Member Registration</h1>
+        <p class="subtitle">
+          Welcome to the family. Register a new member below.
+        </p>
+        <div class="divider"><span>✦</span></div>
+      </div>
+
+      <!-- API Config Bar -->
+      <div class="api-bar">
+        <span class="dot" id="api-dot"></span>
+        <input
+          type="text"
+          id="api-base-url"
+          placeholder="API base URL — e.g. https://yourchurch.com/api"
+        />
+        <button onclick="setApiUrl()">Connect</button>
+      </div>
+
+      <!-- Toast -->
+      <div class="toast" id="toast">
+        <span class="toast-icon" id="toast-icon"></span>
+        <div class="toast-text" id="toast-text"></div>
+      </div>
+
+      <!-- Registration Card -->
+      <div class="card">
+        <p class="section-label">Personal details</p>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>First name <span class="required">*</span></label>
+            <input
+              type="text"
+              id="first_name"
+              placeholder="e.g. Kwame"
+              autocomplete="given-name"
+            />
+            <span class="error-msg" id="err-first_name"
+              >First name is required</span
+            >
+          </div>
+          <div class="form-group">
+            <label>Last name <span class="required">*</span></label>
+            <input
+              type="text"
+              id="last_name"
+              placeholder="e.g. Mensah"
+              autocomplete="family-name"
+            />
+            <span class="error-msg" id="err-last_name"
+              >Last name is required</span
+            >
+          </div>
+        </div>
+
+        <!-- ✅ Contact Field -->
+        <div class="form-group">
+          <label>Contact <span class="required">*</span></label>
+          <input type="text" id="contact" placeholder="e.g. 0241234567" />
+          <span class="error-msg" id="err-contact">Contact is required</span>
+        </div>
+
+        <div class="form-group">
+          <label>Location <span class="required">*</span></label>
+          <input
+            type="text"
+            id="location"
+            placeholder="e.g. Accra, Greater Accra"
+            autocomplete="address-level2"
+          />
+          <span class="error-msg" id="err-location">Location is required</span>
+        </div>
+
+        <div class="form-group">
+          <label>Date joined <span class="required">*</span></label>
+          <input type="date" id="date_joined" />
+          <span class="error-msg" id="err-date_joined">Date is required</span>
+        </div>
+
+        <p class="section-label" style="margin-top: 0.5rem">Referral</p>
+
+        <div class="form-group">
+          <label>Invited by</label>
+          <div class="select-wrapper">
+            <select id="invited_by">
+              <option value="">— No one yet (founding member) —</option>
+            </select>
+          </div>
+          <p class="field-note">
+            Optional — leave blank if this is a founding member
+          </p>
+        </div>
+
+        <button class="btn-submit" id="submit-btn" onclick="submitForm()">
+          <span class="btn-text">Register Member</span>
+          <span class="spinner"></span>
+        </button>
+      </div>
+
+      <!-- Members List -->
+      <div class="members-section">
+        <div class="members-header">
+          <h2 class="members-title">Registered Members</h2>
+          <span class="member-count" id="member-count">0 members</span>
+        </div>
+        <div class="members-list" id="members-list">
+          <div class="empty-state">
+            <div class="empty-icon">✦</div>
+            <p>No members registered yet.<br />Be the first to join!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let API_BASE = "";
+      let members = [];
+
+      // Default date
+      document.getElementById("date_joined").value = new Date()
+        .toISOString()
+        .split("T")[0];
+
+      function setApiUrl() {
+        const val = document
+          .getElementById("api-base-url")
+          .value.trim()
+          .replace(/\/$/, "");
+        if (!val)
+          return showToast(
+            "error",
+            "Missing URL",
+            "Please enter a valid API base URL.",
+          );
+        API_BASE = val;
+        document.getElementById("api-dot").classList.add("connected");
+        showToast("success", "API connected", `Pointing to ${API_BASE}`);
+        loadMembers();
+      }
+
+      async function loadMembers() {
+        if (!API_BASE) return;
+        try {
+          const res = await fetch(`${API_BASE}/members/`);
+          if (!res.ok) throw new Error();
+          members = await res.json();
+          renderMembers();
+          populateInvitedBy();
+        } catch {}
+      }
+
+      function populateInvitedBy() {
+        const sel = document.getElementById("invited_by");
+        const current = sel.value;
+        sel.innerHTML =
+          '<option value="">— No one yet (founding member) —</option>';
+        members.forEach((m) => {
+          const opt = document.createElement("option");
+          opt.value = m.id;
+          opt.textContent = `${m.first_name} ${m.last_name}`;
+          sel.appendChild(opt);
+        });
+        sel.value = current;
+      }
+
+      function renderMembers() {
+        const list = document.getElementById("members-list");
+        const count = document.getElementById("member-count");
+        count.textContent = `${members.length} member${members.length !== 1 ? "s" : ""}`;
+        if (!members.length) {
+          list.innerHTML = `<div class="empty-state"><div class="empty-icon">✦</div><p>No members registered yet.<br>Be the first to join!</p></div>`;
+          return;
+        }
+        list.innerHTML = "";
+        members.forEach((m, i) => {
+          const initials = (m.first_name[0] + m.last_name[0]).toUpperCase();
+          const inviter = m.invited_by
+            ? members.find((x) => x.id == m.invited_by)
+            : null;
+          const inviterName = inviter
+            ? `Invited by ${inviter.first_name} ${inviter.last_name}`
+            : "Founding member";
+          const date = m.date_joined ? formatDate(m.date_joined) : "";
+          const card = document.createElement("div");
+          card.className = "member-card";
+          card.style.animationDelay = `${i * 0.05}s`;
+          card.innerHTML = `<div class="member-avatar">${initials}</div>
+            <div class="member-info">
+              <div class="member-name">${m.first_name} ${m.last_name}</div>
+              <div class="member-meta">${m.location} · ${inviterName}</div>
+            </div>
+            <div class="member-date">${date}</div>`;
+          list.appendChild(card);
+        });
+      }
+
+      function formatDate(dateStr) {
+        const d = new Date(dateStr + "T00:00:00");
+        return d.toLocaleDateString("en-GB", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        });
+      }
+
+      function validate() {
+        const fields = [
+          "first_name",
+          "last_name",
+          "contact",
+          "location",
+          "date_joined",
+        ];
+        let valid = true;
+        fields.forEach((f) => {
+          const el = document.getElementById(f);
+          const err = document.getElementById(`err-${f}`);
+          if (!el.value.trim()) {
+            el.classList.add("error");
+            err.classList.add("visible");
+            valid = false;
+          } else {
+            el.classList.remove("error");
+            err.classList.remove("visible");
+          }
+        });
+        return valid;
+      }
+
+      ["first_name", "last_name", "contact", "location", "date_joined"].forEach(
+        (f) => {
+          document.getElementById(f).addEventListener("input", () => {
+            document.getElementById(f).classList.remove("error");
+            document.getElementById(`err-${f}`).classList.remove("visible");
+          });
+        },
+      );
+
+      async function submitForm() {
+        if (!validate()) return;
+        if (!API_BASE) {
+          showToast(
+            "error",
+            "No API connected",
+            "Enter your API base URL above and click Connect.",
+          );
+          return;
+        }
+
+        const btn = document.getElementById("submit-btn");
+        btn.classList.add("loading");
+        btn.disabled = true;
+
+        const payload = {
+          first_name: document.getElementById("first_name").value.trim(),
+          last_name: document.getElementById("last_name").value.trim(),
+          contact: document.getElementById("contact").value.trim(),
+          location: document.getElementById("location").value.trim(),
+          date_joined: document.getElementById("date_joined").value,
+          invited_by: document.getElementById("invited_by").value || null,
+        };
+
+        try {
+          const res = await fetch(`${API_BASE}/members/`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(JSON.stringify(err));
+          }
+          const newMember = await res.json();
+          members.unshift(newMember);
+          renderMembers();
+          populateInvitedBy();
+          resetForm();
+          showToast(
+            "success",
+            "Member registered!",
+            `${payload.first_name} ${payload.last_name} has been added to the church.`,
+          );
+        } catch (e) {
+          showToast(
+            "error",
+            "Registration failed",
+            "Could not save the member. Check your API connection.",
+          );
+        } finally {
+          btn.classList.remove("loading");
+          btn.disabled = false;
+        }
+      }
+
+      function resetForm() {
+        ["first_name", "last_name", "contact", "location"].forEach(
+          (f) => (document.getElementById(f).value = ""),
+        );
+        document.getElementById("invited_by").value = "";
+        document.getElementById("date_joined").value = new Date()
+          .toISOString()
+          .split("T")[0];
+      }
+
+      function showToast(type, title, message) {
+        const toast = document.getElementById("toast");
+        const icon = document.getElementById("toast-icon");
+        const text = document.getElementById("toast-text");
+        toast.className = `toast ${type}`;
+        icon.textContent = type === "success" ? "✓" : "✕";
+        text.innerHTML = `<strong>${title}</strong>${message}`;
+        toast.classList.add("visible");
+        setTimeout(() => toast.classList.remove("visible"), 4500);
+      }
+    </script>
+  </body>
+</html>
