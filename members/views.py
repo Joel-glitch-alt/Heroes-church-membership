@@ -10,15 +10,17 @@ from .models import Member
 from .serializers import MemberSerializer
 
 
+# FRONTEND VIEW 
 def frontend(request):
     return render(request, 'members/index.html')
 
-
+  # CSRF-EXEMPT AUTHENTICATION CLASS
 class CsrfExemptSessionAuthentication(SessionAuthentication):
     def enforce_csrf(self, request):
         return  # skip CSRF check
 
 
+# API VIEWS
 @method_decorator(csrf_exempt, name='dispatch')
 class MemberListCreateView(APIView):
     """
@@ -26,12 +28,15 @@ class MemberListCreateView(APIView):
     POST /api/members/   — register a new member
     """
     authentication_classes = [CsrfExemptSessionAuthentication]
+    
 
+    # GET ALL MEMBERS
     def get(self, request):
         members = Member.objects.select_related('invited_by').all()
         serializer = MemberSerializer(members, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
+    #
+    # CREATE A NEW MEMBER
     def post(self, request):
         serializer = MemberSerializer(data=request.data)
         if serializer.is_valid():
@@ -43,6 +48,7 @@ class MemberListCreateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+# DETAIL VIEW FOR A SINGLE MEMBER
 @method_decorator(csrf_exempt, name='dispatch')
 class MemberDetailView(APIView):
     """
@@ -52,14 +58,18 @@ class MemberDetailView(APIView):
     """
     authentication_classes = [CsrfExemptSessionAuthentication]
 
+
+    # HELPER METHOD TO GET A MEMBER OBJECT OR RETURN 404
     def get_object(self, pk):
         return get_object_or_404(Member, pk=pk)
-
+    
+    # RETRIEVE A SINGLE MEMBER
     def get(self, request, pk):
         member = self.get_object(pk)
         serializer = MemberSerializer(member)
         return Response(serializer.data)
-
+    
+    # UPDATE A MEMBER
     def put(self, request, pk):
         member = self.get_object(pk)
         serializer = MemberSerializer(member, data=request.data, partial=True)
@@ -67,7 +77,8 @@ class MemberDetailView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+    
+        # DELETE A MEMBER
     def delete(self, request, pk):
         member = self.get_object(pk)
         member.delete()

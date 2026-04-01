@@ -1,11 +1,14 @@
 from django.db import models
 
+
+# Create your models here.
 class Member(models.Model):
     first_name  = models.CharField(max_length=100)
     last_name   = models.CharField(max_length=100)
 
     contact     = models.CharField(max_length=20)
-
+   
+   # SELF-REFERENTIAL FOREIGN KEY FOR INVITER
     invited_by  = models.ForeignKey(
         'self',
         null=True,
@@ -19,6 +22,8 @@ class Member(models.Model):
     date_joined = models.DateField()
     created_at  = models.DateTimeField(auto_now_add=True)
 
+
+     # MODEL META
     class Meta:
         ordering = ['-created_at']
         verbose_name = 'Member'
