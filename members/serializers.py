@@ -24,26 +24,33 @@ class MemberSerializer(serializers.ModelSerializer):
         if obj.invited_by:
             return obj.invited_by.full_name
         return None
-
+    
+        # FIRST NAME VALIDATION
     def validate_first_name(self, value):
         if not value.strip():
             raise serializers.ValidationError('First name cannot be blank.')
         return value.strip().title()
+     
 
+     # LAST NAME VALIDATION
     def validate_last_name(self, value):
         if not value.strip():
             raise serializers.ValidationError('Last name cannot be blank.')
         return value.strip().title()
 
+
+       # LOCATION VALIDATION
     def validate_location(self, value):
         if not value.strip():
             raise serializers.ValidationError('Location cannot be blank.')
         return value.strip()
     
+
+    # INVITED BY VALIDATION
     def validate_invited_by(self, value):
         return value or None
 
-    # ✅ FIXED CONTACT VALIDATION
+    # CONTACT VALIDATION
     def validate_contact(self, value):
         value = value.strip().replace(" ", "").replace("+", "")
 
