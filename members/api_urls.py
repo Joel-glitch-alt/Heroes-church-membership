@@ -5,3 +5,5 @@ urlpatterns = [
     path('members/', MemberListCreateView.as_view(), name='member-list-create'),
     path('members/<int:pk>/', MemberDetailView.as_view(), name='member-detail'),
 ]
+
+
